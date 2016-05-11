@@ -1,6 +1,6 @@
 (ns field-pathp.core
   (:refer-clojure :exclude [empty?])
-  (:use [cljts geom analysis transform relation io])
+  (:use [cljts geom analysis transform relation])
   (:import [com.vividsolutions.jts.geom Coordinate Geometry Polygon LinearRing Point GeometryFactory PrecisionModel]))
 
 (def pol1 (polygon
@@ -33,5 +33,3 @@
 (def hole (get-hole-coords pol1))
 
 (println hole)
-
-
