@@ -5,8 +5,21 @@
                                         LinearRing Point GeometryFactory
                                         PrecisionModel]))
 
+
+(defn isCoordinate2D
+  "Check if a given coordinate is 2D"
+  [^Coordinate coordinate]
+  (.isNaN (.z coordinate))
+  )
+
+(defn isCoordinate3D
+  "Check if a given coordiante is 3D"
+  [^Coordinate coordinate]
+  (not (isCoordinate2D coordinate))
+  )
+
 (defn coord-vec
-  "Convert a JTS Coordinate to a vector."
+  "Convert a JTS Coordinate to a vector of 2D or 3D"
   [^Coordinate coordinate]
   (if (.isNaN (.z coordinate))
     [(.x coordinate) (.y coordinate)]
