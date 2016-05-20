@@ -18,25 +18,26 @@
   (not (isCoordinate2D coordinate))
   )
 
-(defn coord-vec
+(defn getVectorFromCoordinate
   "Convert a JTS Coordinate to a vector of 2D or 3D"
   [^Coordinate coordinate]
   (if (.isNaN (.z coordinate))
     [(.x coordinate) (.y coordinate)]
     [(.x coordinate) (.y coordinate) (.z coordinate)]))
 
-(defn get-coords
+(defn getCoordinatesFromGeometry
   "Return a vec of coords for a JTS Geometry."
   [^Geometry geometry]
-  (mapv coord-vec (.getCoordinates geometry)))
+  (mapv getVectorFromCoordinate (.getCoordinates geometry)))
 
-(defn get-interior-rings
-  "Return a seq of JTS LinearRing that represent the holes in a Polygon."
+(defn getInteriorLinearRings
+  "Return a Lazy-seq of JTS LinearRing that represent the holes in a Polygon."
   [^Polygon geometry]
-  (for [i (range 0 (.getNumInteriorRing geometry))]
-    (.getInteriorRingN geometry i)))
+  (map #(.getInteriorRingN geometry %) (range (.getNumInteriorRing geometry))))
 
-(defn get-hole-coords
+(defn getHoleCoordinates
   "Return a vec of coord data that represents the holes of a JTS Polygon."
   [^Polygon geometry]
-  (mapv get-coords (get-interior-rings geometry)))
+  (mapv getCoordinatesFromGeometry (getInteriorLinearRings geometry)))
+
+
