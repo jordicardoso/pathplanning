@@ -30,15 +30,14 @@
   [^Geometry geometry]
   (mapv getVectorFromCoordinate (.getCoordinates geometry)))
 
-(defn get-interior-rings
-  "Return a seq of JTS LinearRing that represent the holes in a Polygon."
+(defn getInteriorLinearRings
+  "Return a Lazy-seq of JTS LinearRing that represent the holes in a Polygon."
   [^Polygon geometry]
-  (for [i (range 0 (.getNumInteriorRing geometry))]
-    (.getInteriorRingN geometry i)))
+  (map #(.getInteriorRingN geometry %) (range (.getNumInteriorRing geometry))))
 
-(defn get-hole-coords
+(defn getHoleCoordinates
   "Return a vec of coord data that represents the holes of a JTS Polygon."
   [^Polygon geometry]
-  (mapv getCoordinatesFromGeometry (get-interior-rings geometry)))
+  (mapv getCoordinatesFromGeometry (getInteriorLinearRings geometry)))
 
 

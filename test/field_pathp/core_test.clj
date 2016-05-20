@@ -1,7 +1,8 @@
 (ns field-pathp.core-test
   (:require [clojure.test :refer :all]
             [field-pathp.core :refer :all])
-  (:use [cljts geom analysis transform relation]))
+  (:use [cljts geom analysis transform relation])
+  (:import (clojure.lang LazySeq)))
 
 #! "Documentation about clojure test syntax
 #!   https://clojure.github.io/clojure/clojure.test-api.html"
@@ -13,13 +14,13 @@
             (linear-ring [(c 7 64) (c 43 64) (c 39 37) (c 7 37) (c 7 64)])
             [(linear-ring [(c 18 55) (c 33 55) (c 32 51) (c 16 51) (c 18 55)])]))
 
-
+(def internalHole (linear-ring [(c 18 55) (c 33 55) (c 32 51) (c 16 51) (c 18 55)]))
 
 
 (deftest testPolygons
   (testing "Getting the coordinates of the hole of a given polygon"
     (is (= [[[18.0 55.0] [33.0 55.0] [32.0 51.0] [16.0 51.0] [18.0 55.0]]]
-           (get-hole-coords squaredPolygonWithSquaredHole))))
+           (getHoleCoordinates squaredPolygonWithSquaredHole))))
 
   )
 
@@ -47,9 +48,20 @@
            (getCoordinatesFromGeometry polygonWithoutHoles))))
   )
 
-(deftest TestGetCoordinatesOfHole
-  (testing "Verify coordinats of interior hole"
-    (is (= (quote "LINEARRING (18 55, 33 55, 32 51, 16 51, 18 55)")
-           (get-interior-rings squaredPolygonWithSquaredHole)))))
+(deftest TestGetLinearRingOfTheHole
+  (testing "Verify linear ring of interior hole"
+    (is (= internalHole
+           (first (getInteriorLinearRings squaredPolygonWithSquaredHole)))))
 
+  (testing "Verify is of type LazySeq"
+    (is (= LazySeq
+           (type (getInteriorLinearRings squaredPolygonWithSquaredHole))))
+    )
+  )
+
+(deftest TestGetCoordinatesOfTheHoleOfAGivenPolygon
+  (testing "Verify the coordinates of the hole"
+    (is (= [[[18.0 55.0] [33.0 55.0] [32.0 51.0] [16.0 51.0] [18.0 55.0]]]
+           (getHoleCoordinates squaredPolygonWithSquaredHole))))
+  )
 
