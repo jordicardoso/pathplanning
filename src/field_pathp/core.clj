@@ -47,10 +47,11 @@
 
 "map of vectors"
 (def graph (map (fn [x] [[(+ xaxis (* x toolsize)) yaxistop] [(+ xaxis (* x toolsize)) yaxisbot]] ) (range 0 (int (/ (length toplns) toolsize)))))
-(def vgraph (vec graph))
+(def vgraph (vec graph)) "Vector generator from map"
 
-"Max-Min X axis for decomposition (computation for only 1 hole)"
+"Max-Min X axis for decomposition (computation for only 1 hole) ToDo: decomposition many holes"
 (def minx (apply min-key first (hole 0)))
 (def maxx (apply max-key first (hole 0)))
 
-
+(def decompln1 (line-string [(c (maxx 0) yaxistop) (c (maxx 0) yaxisbot)]))
+(def decompln2 (line-string [(c (maxx 0) yaxistop) (c (maxx 0) yaxisbot)]))
