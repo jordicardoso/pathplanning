@@ -3,6 +3,8 @@
   (:use [cljts geom analysis transform relation])
   (:import [com.vividsolutions.jts.geom Coordinate Geometry Polygon LineString LinearRing Point GeometryFactory PrecisionModel]))
 
+(defonce ^:private ^GeometryFactory geom-factory (GeometryFactory.))
+
 (def pol1 (polygon
             (linear-ring [(c 7 64) (c 43 64) (c 39 37) (c 7 37) (c 7 64)])
             [(linear-ring [(c 18 55) (c 33 55) (c 32 51) (c 16 51) (c 18 55)])]))
@@ -33,7 +35,7 @@
   (mapv get-coords (get-interior-rings geometry)))
 
 "Variable Definitions needed to decomposition process"
-(def hole (get-hole-coords pol1))
+(def hole (get-hole-coords pol1)) "Coordenades dels forats"
 (def enve (envelope pol1)) "Minimum envolpe rectangle"
 (def cenve (get-coords enve)) "Vertex coords"
 (def xaxis (get (cenve 0) 0)) "X Axis "
@@ -43,9 +45,12 @@
 (def toplns (line-string [(envecoord 1) (envecoord 2)])) "Top linestring of the envelope rectangle"
 (def botlns (line-string [(envecoord 3) (envecoord 4)])) "Bottom linestring of the evelope rectangle"
 
-"linestrings recursive generator"
-(loop [x xaxis]
-  (when (< x (+ (length toplns) xaxis) )
-    (line-string [(envecoord 1) (envecoord 2)])
-    (println lns)
-    (recur ( + x toolsize))))
+"map of vectors"
+(def graph (map (fn [x] [[(+ xaxis (* x toolsize)) yaxistop] [(+ xaxis (* x toolsize)) yaxisbot]] ) (range 0 (int (/ (length toplns) toolsize)))))
+(def vgraph (vec graph))
+
+"Max-Min X axis for decomposition (computation for only 1 hole)"
+(def minx (apply min-key first (hole 0)))
+(def maxx (apply max-key first (hole 0)))
+
+
